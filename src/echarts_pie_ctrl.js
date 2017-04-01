@@ -17,10 +17,15 @@ export class EchartsPieCtrl extends MetricsPanelCtrl {
         this.events.on('init-edit-mode', this.onInitEditMode.bind(this));
         this.events.on('panel-initialized', this.render.bind(this));
         this.events.on('data-received', this.onDataReceived.bind(this));
+        this.events.on('data-snapshot-load', this.onDataReceived.bind(this));
     }
 
     onDataReceived(dataList) {
-        // console.log(dataList);
+        console.log(dataList);
+        this.data = dataList;
+        this.dataChanged=true;
+        this.render();
+        this.dataChanged=false;
     }
 
     onInitEditMode() {
@@ -29,8 +34,9 @@ export class EchartsPieCtrl extends MetricsPanelCtrl {
 
     link(scope, elem, attrs, ctrl) {
         const $panelContainer = elem.find('.echarts_container')[0];
-        let option = {};
-        
+        let option = {},
+        echartsData = [];
+
         //init height
         var height = ctrl.height || panel.height || ctrl.row.height;
         if (_.isString(height)) {
@@ -42,22 +48,33 @@ export class EchartsPieCtrl extends MetricsPanelCtrl {
         var width = document.body.clientWidth;
         width = (width - 5.6 * 2) * ctrl.panel.span / 12 - 5.6 * 2 - 1 * 2 - 10 * 2;
         $panelContainer.style.width = width + 'px';
-        console.log(ctrl.panel.span);
-        console.log(width);
 
         //init echarts
         var myChart = echarts.init($panelContainer, 'dark');
 
+        //设置echarts option中的data,将在rander的eval中调用
+        function setDataOption(){
+            echartsData = [];
+            for(let i = 0; i<ctrl.data.length;i++){
+                echartsData.push({
+                    name: ctrl.data[i].target,
+                    value: ctrl.data[i].datapoints[ctrl.data[i].datapoints.length-1][0]
+                });
+            }
+        }
+
         function render() {
-            if (!ctrl.panel.EchartsOption || ctrl.panel.EchartsOption == 'option = {}' ||!myChart) {
+            if (!myChart||!ctrl.data) {
                 return;
             }
             // console.log(ctrl.panel.EchartsOption);
             myChart.resize();
-
-            eval(ctrl.panel.EchartsOption);
-
-            myChart.setOption(option);
+            if(ctrl.dataChanged){
+                myChart.clear();
+                setDataOption();
+                eval(ctrl.panel.EchartsOption);
+                myChart.setOption(option);
+            }
         }
 
         this.events.on('render', function () {
