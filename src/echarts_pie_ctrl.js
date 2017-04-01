@@ -21,11 +21,10 @@ export class EchartsPieCtrl extends MetricsPanelCtrl {
     }
 
     onDataReceived(dataList) {
-        console.log(dataList);
+        // console.log(dataList);
         this.data = dataList;
-        this.dataChanged=true;
+        this.dataChanged = true;
         this.render();
-        this.dataChanged=false;
     }
 
     onInitEditMode() {
@@ -35,7 +34,10 @@ export class EchartsPieCtrl extends MetricsPanelCtrl {
     link(scope, elem, attrs, ctrl) {
         const $panelContainer = elem.find('.echarts_container')[0];
         let option = {},
-        echartsData = [];
+            echartsData = [],
+            echartsDataSum = NaN,
+            echartsLegend = [];
+        ctrl.dataChanged = true;
 
         //init height
         var height = ctrl.height || panel.height || ctrl.row.height;
@@ -52,29 +54,48 @@ export class EchartsPieCtrl extends MetricsPanelCtrl {
         //init echarts
         var myChart = echarts.init($panelContainer, 'dark');
 
-        //设置echarts option中的data,将在rander的eval中调用
-        function setDataOption(){
+        //设置echarts option中的data,legend,dataSum变量,可在rander的eval中使用
+        function setDataOption() {
             echartsData = [];
-            for(let i = 0; i<ctrl.data.length;i++){
+            for (let i = 0; i < ctrl.data.length; i++) {
                 echartsData.push({
                     name: ctrl.data[i].target,
-                    value: ctrl.data[i].datapoints[ctrl.data[i].datapoints.length-1][0]
+                    value: ctrl.data[i].datapoints[ctrl.data[i].datapoints.length - 1][0]
                 });
             }
         }
 
+        function setLegendOption() {
+            echartsLegend = [];
+            for (let i = 0; i < echartsData.length; i++) {
+                echartsLegend.push(echartsData[i].name);
+            }
+            return echartsLegend;
+        }
+
+        function setDataSumOption() {
+            echartsDataSum = [];
+            for (let i = 0; i < echartsData.length; i++) {
+                echartsLegend += parseInt(echartsData[i].value);
+            }
+            return echartsLegend;
+        }
+
         function render() {
-            if (!myChart||!ctrl.data) {
+            if (!myChart || !ctrl.data) {
                 return;
             }
             // console.log(ctrl.panel.EchartsOption);
             myChart.resize();
-            if(ctrl.dataChanged){
+            if (ctrl.dataChanged) {
                 myChart.clear();
                 setDataOption();
-                eval(ctrl.panel.EchartsOption);
-                myChart.setOption(option);
+                setLegendOption();
+                setDataSumOption();
+                ctrl.dataChanged = false;
             }
+            eval(ctrl.panel.EchartsOption);
+            myChart.setOption(option);
         }
 
         this.events.on('render', function () {
