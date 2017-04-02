@@ -25,6 +25,7 @@ export class EchartsPieCtrl extends MetricsPanelCtrl {
         this.data = dataList;
         this.dataChanged = true;
         this.render();
+        this.dataChanged = false;
     }
 
     onInitEditMode() {
@@ -70,29 +71,28 @@ export class EchartsPieCtrl extends MetricsPanelCtrl {
             for (let i = 0; i < echartsData.length; i++) {
                 echartsLegend.push(echartsData[i].name);
             }
-            return echartsLegend;
         }
 
         function setDataSumOption() {
             echartsDataSum = [];
             for (let i = 0; i < echartsData.length; i++) {
-                echartsLegend += parseInt(echartsData[i].value);
+                echartsDataSum += parseInt(echartsData[i].value);
             }
-            return echartsLegend;
         }
 
         function render() {
-            if (!myChart || !ctrl.data) {
+            if (!myChart||!ctrl.data) {
+                console.log('false');
                 return;
             }
             // console.log(ctrl.panel.EchartsOption);
+                console.log('true');
             myChart.resize();
             if (ctrl.dataChanged) {
                 myChart.clear();
                 setDataOption();
                 setLegendOption();
                 setDataSumOption();
-                ctrl.dataChanged = false;
             }
             eval(ctrl.panel.EchartsOption);
             myChart.setOption(option);
