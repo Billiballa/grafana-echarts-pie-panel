@@ -26,6 +26,7 @@ export class EchartsPieCtrl extends MetricsPanelCtrl {
         this.dataChanged = true;
         this.render();
         this.dataChanged = false;
+        console.log(this.calculatePanelHeight)
     }
 
     onInitEditMode() {
@@ -74,7 +75,7 @@ export class EchartsPieCtrl extends MetricsPanelCtrl {
         }
 
         function setDataSumOption() {
-            echartsDataSum = [];
+            echartsDataSum = 0;
             for (let i = 0; i < echartsData.length; i++) {
                 echartsDataSum += parseInt(echartsData[i].value);
             }
@@ -82,11 +83,9 @@ export class EchartsPieCtrl extends MetricsPanelCtrl {
 
         function render() {
             if (!myChart||!ctrl.data) {
-                console.log('false');
                 return;
             }
             // console.log(ctrl.panel.EchartsOption);
-                console.log('true');
             myChart.resize();
             if (ctrl.dataChanged) {
                 myChart.clear();
