@@ -22,6 +22,10 @@ export class EchartsPieCtrl extends MetricsPanelCtrl {
 
     onDataReceived(dataList) {
         this.data = dataList;
+        this.dataChanged();
+    }
+
+    dataChanged(){
         this.IS_DATA_CHANGED = true;
         this.render();
         this.IS_DATA_CHANGED = false;
