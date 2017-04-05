@@ -21,12 +21,10 @@ export class EchartsPieCtrl extends MetricsPanelCtrl {
     }
 
     onDataReceived(dataList) {
-        // console.log(dataList);
         this.data = dataList;
-        this.dataChanged = true;
+        this.IS_DATA_CHANGED = true;
         this.render();
-        this.dataChanged = false;
-        console.log(this.calculatePanelHeight)
+        this.IS_DATA_CHANGED = false;
     }
 
     onInitEditMode() {
@@ -39,7 +37,8 @@ export class EchartsPieCtrl extends MetricsPanelCtrl {
             echartsData = [],
             echartsDataSum = NaN,
             echartsLegend = [];
-        ctrl.dataChanged = true;
+
+        ctrl.IS_DATA_CHANGED = true;
 
         //init height
         var height = ctrl.height || panel.height || ctrl.row.height;
@@ -56,7 +55,7 @@ export class EchartsPieCtrl extends MetricsPanelCtrl {
         //init echarts
         var myChart = echarts.init($panelContainer, 'dark');
 
-        //设置echarts option中的data,legend,dataSum变量,可在rander的eval中使用
+        //设置echarts option中的data,legend,dataSum变量,可在render的eval中使用
         function setDataOption() {
             echartsData = [];
             for (let i = 0; i < ctrl.data.length; i++) {
@@ -85,9 +84,8 @@ export class EchartsPieCtrl extends MetricsPanelCtrl {
             if (!myChart||!ctrl.data) {
                 return;
             }
-            // console.log(ctrl.panel.EchartsOption);
             myChart.resize();
-            if (ctrl.dataChanged) {
+            if (ctrl.IS_DATA_CHANGED) {
                 myChart.clear();
                 setDataOption();
                 setLegendOption();
