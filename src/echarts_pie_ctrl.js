@@ -45,19 +45,19 @@ export class EchartsPieCtrl extends MetricsPanelCtrl {
         ctrl.IS_DATA_CHANGED = true;
 
         //init height
-        var height = ctrl.height || panel.height || ctrl.row.height;
+        let height = ctrl.height || panel.height || ctrl.row.height;
         if (_.isString(height)) {
             height = parseInt(height.replace('px', ''), 10);
         }
         $panelContainer.style.height = height + 'px';
 
         //init width
-        var width = document.body.clientWidth;
+        let width = document.body.clientWidth;
         width = (width - 5.6 * 2) * ctrl.panel.span / 12 - 5.6 * 2 - 1 * 2 - 10 * 2;
         $panelContainer.style.width = width + 'px';
 
         //init echarts
-        var myChart = echarts.init($panelContainer, 'dark');
+        let myChart = echarts.init($panelContainer, 'dark');
 
         //设置echarts option中的data,legend,dataSum变量,可在render的eval中使用
         function setDataOption() {
