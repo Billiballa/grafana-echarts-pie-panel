@@ -1,7 +1,7 @@
-import _ from 'lodash';
 import { MetricsPanelCtrl } from 'app/plugins/sdk';
-import echarts from 'vendor/echarts';
-import 'vendor/dark';
+import _ from 'lodash';
+import echarts from './libs/echarts';
+import './libs/dark';
 
 export class EchartsPieCtrl extends MetricsPanelCtrl {
 
@@ -49,6 +49,8 @@ export class EchartsPieCtrl extends MetricsPanelCtrl {
         if (_.isString(height)) {
             height = parseInt(height.replace('px', ''), 10);
         }
+	    height -= 5;
+	    height -= ctrl.panel.title ? 24 : 9;
         $panelContainer.style.height = height + 'px';
 
         //init width
