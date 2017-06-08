@@ -86,6 +86,26 @@ export class EchartsPieCtrl extends MetricsPanelCtrl {
             }
         }
 
+        // 计时器容器，防止重复触发计时事件
+        var callInterval = function () {
+            var timeout, result;
+
+            function func(callBack, interval) {
+                var context = this;
+                var args = arguments;
+
+                if (timeout) clearTimeout(timeout);
+
+                timeout = setInterval(function () {
+                    result = callBack.apply(context, args);
+                }, interval);
+
+                return result;
+            }
+
+            return func;
+        }();
+
         function render() {
             if (!myChart||!ctrl.data) {
                 return;
